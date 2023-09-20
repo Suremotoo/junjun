@@ -74,7 +74,7 @@ export default function DocsPage() {
   return (
     <>
       <div className="px-6 py-18 lg:px-8">
-        <div className="mx-auto max-w-3xl text-base leading-7">
+        <div className="mx-auto max-w-5xl text-base leading-7">
           <p className="text-base font-semibold leading-7 primary">
             Introducing
           </p>
