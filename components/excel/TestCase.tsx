@@ -143,6 +143,7 @@ export class TestCase {
   private generateExpectedResults(): void {
     if (this.missingParamList != null && this.missingParamList.length > 0) {
       let builder: string[] = [];
+      let reactNodeBuilder: JSX.Element[] = [];
       this.missingParamList.forEach((paramBean) => {
         if (this.showKey) {
           builder.push(paramBean.getId() + ":");
@@ -151,7 +152,7 @@ export class TestCase {
         builder.push(paramBean.getName() + " " + this.testCaseMsg.notNullable);
         builder.push(";");
         builder.push("\n");
-        this.expectedResultsReactNode.push(
+        reactNodeBuilder.push(
           <Chip
             startContent={<CheckIcon size={18} />}
             variant="faded"
@@ -160,7 +161,7 @@ export class TestCase {
             {paramBean.getName()}
           </Chip>
         );
-        this.expectedResultsReactNode.push(
+        reactNodeBuilder.push(
           <Chip
             startContent={<CheckIcon size={18} />}
             variant="faded"
@@ -169,7 +170,9 @@ export class TestCase {
             {this.testCaseMsg.notNullable}
           </Chip>
         );
-        this.expectedResultsReactNode.push(<br />);
+        ;
+        reactNodeBuilder.push(<br />);
+        this.expectedResultsReactNode = reactNodeBuilder
       });
       this.expectedResults = builder.join("");
     }
