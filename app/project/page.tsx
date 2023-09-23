@@ -29,7 +29,6 @@ import { SearchIcon } from "../../components/searchIcon";
 import { ChevronDownIcon } from "../../components/chevronDownIcon";
 import { columns, statusOptions } from "./data";
 import { capitalize, getColorForElement } from "../../components/utils";
-import { deleteProject, getProjects } from "../../lib/api-project";
 
 import { Project } from "../../models/Project";
 import AddProject from "./add-project";
@@ -57,12 +56,16 @@ export default function ProjectPage() {
   const [refresh, setRefresh] = useState(false);
 
   function updateList(isRefresh: boolean) {
-    setRefresh(isRefresh);
+    setRefresh(isRefresh ? !refresh : refresh);
   }
 
   async function fetchData() {
     try {
-      const fetchedData = await getProjects();
+      // const fetchedData = await getProjects();
+      const fetchedData = await fetch("/api/project", {
+        method: "GET",
+      }).then((res) => res.json());
+      console.log("fetchedData", fetchedData);
       const list = fetchedData.map(Project.fromObject);
       console.log(list);
       // await mockSleep();
@@ -87,7 +90,11 @@ export default function ProjectPage() {
 
   async function deleteInfo(id: string) {
     try {
-      await deleteProject(id);
+      // await deleteProject(id);
+      await fetch("/api/project", {
+        method: "DELETE",
+        body: JSON.stringify({ id: id }),
+      });
       setPage(1);
     } catch (error) {
       console.error("Error deleteInfo project:", error);
@@ -378,11 +385,7 @@ export default function ProjectPage() {
         );
       case "aliasName":
         return (
-          <Chip
-            className=""
-            size="lg"
-            variant="flat"
-          >
+          <Chip className="" size="lg" variant="flat">
             {cellValue}
           </Chip>
         );

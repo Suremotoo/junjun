@@ -20,7 +20,6 @@ import { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "@/components/plusIcon";
 import { Controller, useForm } from "react-hook-form";
 import { getProjects } from "../../lib/api-project";
-import { createApi, deleteApi, getApiById, updateApi } from "../../lib/api-api";
 
 import { Project } from "@/models/Project";
 import { Api, emptyApiTyped } from "@/models/Api";
@@ -42,7 +41,9 @@ export default function AddApi({
   const [projectList, setProjectList] = useState([]);
 
   async function initProjects() {
-    const fetchedProjectList = await getProjects();
+    const fetchedProjectList = await fetch("/api/project", {
+      method: "GET",
+    }).then((res) => res.json());
     const projectArray = fetchedProjectList.map(Project.fromObject);
     console.log(JSON.stringify(projectArray));
     setProjectList(projectArray);
@@ -57,7 +58,12 @@ export default function AddApi({
         setIsLoading(true);
         if (operationType == OperationType.Update && primaryKey) {
           console.log("primaryKey", primaryKey);
-          const queryItem = await getApiById(primaryKey);
+          const queryItem = await fetch(
+            `/api/apis?id=${encodeURIComponent(primaryKey)}`,
+            {
+              method: "GET",
+            }
+          ).then((res) => res.json());
           const itemObj = Api.fromObject(queryItem);
           setCurrentItem(queryItem);
           console.log("form get item:", itemObj);
@@ -118,14 +124,20 @@ export default function AddApi({
   async function performOperation(operation: OperationType, formData: object) {
     switch (operation) {
       case OperationType.Create:
-        await createApi(formData);
+         await fetch("/api/apis", {
+           method: "POST",
+           body: JSON.stringify(formData),
+         }).then((res) => res.json());
         break;
       case OperationType.Delete:
         // ingore
-        deleteApi(formData.id);
+        
         break;
       case OperationType.Update:
-        await updateApi(formData);
+         await fetch("/api/apis", {
+           method: "PUT",
+           body: JSON.stringify(formData),
+         }).then((res) => res.json());
         break;
       case OperationType.Retrieve:
         break;

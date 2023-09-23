@@ -17,12 +17,6 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "@/components/plusIcon";
 import { useForm } from "react-hook-form";
-import {
-  createProject,
-  deleteProject,
-  getProjectById,
-  updateProject,
-} from "../../lib/api-project";
 
 import { Project, emptyProjectTyped } from "@/models/Project";
 import { FormComponentProps, OperationType } from "@/models/crud";
@@ -47,7 +41,13 @@ export default function AddProject({
         if (operationType == OperationType.Update && primaryKey) {
           console.log("primaryKey", primaryKey);
 
-          const queryItem = await getProjectById(primaryKey);
+          // const queryItem = await getProjectById(primaryKey);
+          const queryItem = await fetch(
+            `/api/project?id=${encodeURIComponent(primaryKey)}`,
+            {
+              method: "GET",
+            }
+          ).then((res) => res.json());
           const itemObj = Project.fromObject(queryItem);
           setCurrentItem(queryItem);
           console.log("form get item:", itemObj);
@@ -107,13 +107,21 @@ export default function AddProject({
   async function performOperation(operation: OperationType, formData: object) {
     switch (operation) {
       case OperationType.Create:
-        await createProject(formData);
+        // await createProject(formData);
+        await fetch("/api/project", {
+          method: "POST",
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
         break;
       case OperationType.Delete:
-        deleteProject(formData.id);
+        // deleteProject(formData.id);
         break;
       case OperationType.Update:
-        await updateProject(formData);
+        // await updateProject(formData);
+          await fetch("/api/project", {
+            method: "PUT",
+            body: JSON.stringify(formData),
+          }).then((res) => res.json());
         break;
       case OperationType.Retrieve:
         break;

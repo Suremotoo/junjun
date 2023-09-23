@@ -4,6 +4,7 @@ const os = require("os");
 const userHomeDirectory = os.homedir();
 
 const nextConfig = {
+  // output: "export",
   experimental: {
     serverActions: true,
   },

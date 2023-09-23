@@ -20,8 +20,6 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "@/components/plusIcon";
 import { Controller, useForm } from "react-hook-form";
-import { getApis } from "../../lib/api-api";
-import { createParam, updateParam, getParamById } from "../../lib/api-paramter";
 
 import { Parameter, emptyParameterTyped } from "@/models/Paramter";
 import { FormComponentProps, OperationType } from "@/models/crud";
@@ -52,7 +50,9 @@ export default function AddParamter({
   const [showErrMsg, setShowErrMsg] = useState(false);
 
   async function initApis() {
-    const fetchedApiList = await getApis();
+    const fetchedApiList = await fetch("/api/apis", {
+      method: "GET",
+    }).then((res) => res.json());
     const apiArray = fetchedApiList.map(Api.fromObject);
     console.log(JSON.stringify(apiArray));
     setApiList(apiArray);
@@ -70,7 +70,12 @@ export default function AddParamter({
         setIsLoading(true);
         if (operationType == OperationType.Update && primaryKey) {
           console.log("primaryKey", primaryKey);
-          const queryItem = await getParamById(primaryKey);
+          const queryItem = await fetch(
+            `/api/paramter?id=${encodeURIComponent(primaryKey)}`,
+            {
+              method: "GET",
+            }
+          ).then((res) => res.json());
           const itemObj = Parameter.fromObject(queryItem);
           setCurrentItem(queryItem);
           console.log("form get item:", itemObj);
@@ -108,7 +113,7 @@ export default function AddParamter({
       if (selectApi === null || selectApi === undefined || selectApi === "") {
         console.log("selectApi is null");
         setShowErrMsg(true);
-        return ;
+        return;
       }
       data.apiId = Number(selectApi);
       data.isRequired = isRequireSelected;
@@ -139,14 +144,20 @@ export default function AddParamter({
   async function performOperation(operation: OperationType, formData: object) {
     switch (operation) {
       case OperationType.Create:
-        await createParam(formData);
+        await fetch("/api/paramter", {
+          method: "POST",
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
         break;
       case OperationType.Delete:
         // ingore
         // deleteApi(formData.id);
         break;
       case OperationType.Update:
-        await updateParam(formData);
+        await fetch("/api/paramter", {
+          method: "PUT",
+          body: JSON.stringify(formData),
+        }).then((res) => res.json());
         break;
       case OperationType.Retrieve:
         break;

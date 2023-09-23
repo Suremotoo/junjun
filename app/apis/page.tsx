@@ -32,7 +32,6 @@ import {
   getColorForElement,
   mockSleep,
 } from "../../components/utils";
-import { deleteApi, getApis } from "../../lib/api-api";
 
 import { Api } from "../../models/Api";
 import AddApi from "./add-api";
@@ -41,7 +40,6 @@ import { EditIcon } from "@/components/editIcon";
 
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { getProjects } from "@/lib/api-project";
 import { Project } from "@/models/Project";
 import { FieldStringIcon } from "@/components/icons";
 import { useRouter } from "next/navigation";
@@ -71,7 +69,9 @@ export default function ApiPage() {
   }
 
   async function fetchedProjectList() {
-    const fetchedProjectList = await getProjects();
+    const fetchedProjectList = await fetch("/api/project", {
+      method: "GET",
+    }).then((res) => res.json());
     const projectArray = fetchedProjectList.map(Project.fromObject);
     console.log("api==>", projectArray);
     projectArray.forEach((project) => {
@@ -83,8 +83,10 @@ export default function ApiPage() {
   async function fetchData() {
     try {
       // await mockSleep();
-      fetchedProjectList();
-      const fetchedData = await getApis();
+      await fetchedProjectList();
+      const fetchedData = await fetch("/api/apis", {
+        method: "GET",
+      }).then((res) => res.json());
       const list = fetchedData.map(Api.fromObject);
       console.log("api==>", list);
       list.forEach((api) => {
@@ -99,7 +101,7 @@ export default function ApiPage() {
       setLoading(false);
       return list;
     } catch (error) {
-      console.error("Error fetching projects:", error);
+      console.error("Error fetching apis:", error);
       setLoading(false);
       Swal.fire({
         icon: "error",
@@ -115,7 +117,10 @@ export default function ApiPage() {
 
   async function deleteInfo(id: string) {
     try {
-      await deleteApi(id);
+      await fetch("/api/apis", {
+        method: "DELETE",
+        body: JSON.stringify({ id: id }),
+      });
       setPage(1);
     } catch (error) {
       console.error("Error delete api:", error);

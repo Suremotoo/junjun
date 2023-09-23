@@ -39,9 +39,8 @@ import AddParamter from "./add-param";
 import { OperationType } from "@/models/crud";
 import { EditIcon } from "@/components/editIcon";
 
-import { getApis } from "@/lib/api-api";
 import { Api } from "@/models/Api";
-import { getParams, deleteParam } from "@/lib/api-paramter";
+
 import { Parameter } from "@/models/Paramter";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -76,7 +75,9 @@ export default function ParamterPage() {
   }
 
   async function fetchedApiList() {
-    const fetchedApiList = await getApis();
+    const fetchedApiList = await fetch("/api/apis", {
+      method: "GET",
+    }).then((res) => res.json());
     const apiArray = fetchedApiList.map(Api.fromObject);
     console.log("api==>", apiArray);
     apiArray.forEach((api) => {
@@ -88,8 +89,10 @@ export default function ParamterPage() {
   async function fetchData() {
     try {
       // await mockSleep();
-      fetchedApiList();
-      const fetchedData = await getParams();
+      await fetchedApiList();
+      const fetchedData = await fetch("/api/paramter", {
+        method: "GET",
+      }).then((res) => res.json());
       const list = fetchedData.map(Parameter.fromObject);
       console.log("paramter==>", list);
       list.forEach((param) => {
@@ -98,7 +101,7 @@ export default function ParamterPage() {
           param.api = apiMap.get(apiId);
         }
       });
-
+      
       if (searchApiId && apiMap.has(Number(searchApiId))) {
         setFilterValue(apiMap.get(Number(searchApiId)).name);
         onSearchChange(apiMap.get(Number(searchApiId)).name);
@@ -125,10 +128,13 @@ export default function ParamterPage() {
 
   async function deleteInfo(id: string) {
     try {
-      await deleteParam(id);
+      await fetch("/api/paramter", {
+        method: "DELETE",
+        body: JSON.stringify({ id: id }),
+      });
       setPage(1);
     } catch (error) {
-      console.error("Error deleteParam project:", error);
+      console.error("Error deleteParam :", error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -325,7 +331,10 @@ export default function ParamterPage() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-420 text-small" aria-label="total label">
+          <span
+            className="text-default-420 text-small"
+            aria-label="total label"
+          >
             Total {list.length} datas
           </span>
           <label className="flex items-center text-default-400 text-small">

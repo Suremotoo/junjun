@@ -1,7 +1,6 @@
 "use client";
 import { useState, useMemo, useCallback, useEffect } from "react";
 
-
 import {
   Input,
   Button,
@@ -29,7 +28,6 @@ import { SearchIcon } from "../../components/searchIcon";
 import { ChevronDownIcon } from "../../components/chevronDownIcon";
 import { columns, statusOptions } from "./data";
 import { capitalize, mockSleep } from "../../components/utils";
-import { deleteUser, getUsers } from "../../lib/api-user";
 
 import { User } from "../../models/User";
 import AddUser from "./add-user";
@@ -55,15 +53,18 @@ export default function UserPage() {
   const [users, setUsers] = useState([]);
 
   const [refresh, setRefresh] = useState(false);
-  
+
   function updateList(isRefresh: boolean) {
-    setRefresh(isRefresh);
+    setRefresh(isRefresh ? !refresh : refresh);
   }
 
   async function fetchData() {
     try {
-      const fetchedUsers = await getUsers();
-      const userList = fetchedUsers.map(User.fromObject);
+       const fetchedData = await fetch("/api/user", {
+         method: "GET",
+       }).then((res) => res.json());
+       console.log("fetchedData", fetchedData);
+      const userList = fetchedData.map(User.fromObject);
       console.log(userList);
       // await mockSleep();
       setUsers(userList);
@@ -87,7 +88,10 @@ export default function UserPage() {
 
   async function deleteUserInfo(userId: string) {
     try {
-      await deleteUser(userId);
+      await fetch("/api/user", {
+        method: "DELETE",
+        body: JSON.stringify({ id: userId }),
+      });
       setPage(1);
     } catch (error) {
       console.error("Error deleteUserInfo users:", error);
@@ -269,7 +273,7 @@ export default function UserPage() {
             <AddUser
               refreshList={updateList}
               operationType={OperationType.Create}
-              onCloseForm={()=>{}}
+              onCloseForm={() => {}}
             />
           </div>
         </div>
@@ -352,95 +356,98 @@ export default function UserPage() {
     onNextPage,
   ]);
 
-  const renderCell = useCallback((user: User, columnKey: string) => {
-    const cellValue = user[columnKey];
+  const renderCell = useCallback(
+    (user: User, columnKey: string) => {
+      const cellValue = user[columnKey];
 
-    switch (columnKey) {
-      case "name":
-        return (
-          <UserUIComponent
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </UserUIComponent>
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">
-              {user.team}
-            </p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center gap-2">
-            {/* <Tooltip content="Details">
+      switch (columnKey) {
+        case "name":
+          return (
+            <UserUIComponent
+              avatarProps={{ radius: "lg", src: user.avatar }}
+              description={user.email}
+              name={cellValue}
+            >
+              {user.email}
+            </UserUIComponent>
+          );
+        case "role":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-small capitalize">{cellValue}</p>
+              <p className="text-bold text-tiny capitalize text-default-400">
+                {user.team}
+              </p>
+            </div>
+          );
+        case "status":
+          return (
+            <Chip
+              className="capitalize"
+              color={statusColorMap[user.status]}
+              size="sm"
+              variant="flat"
+            >
+              {cellValue}
+            </Chip>
+          );
+        case "actions":
+          return (
+            <div className="relative flex items-center gap-2">
+              {/* <Tooltip content="Details">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                 <EyeIcon />
               </span>
             </Tooltip> */}
-            <Tooltip color="secondary" content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EditIcon
-                  onClick={() => {
-                    handleShowDetails(user.id);
-                    console.log("handleShowDetails clicked", showDetails);
-                  }}
-                />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon
-                  onClick={() => {
-                    console.log("DeleteIcon", user.id);
-                    Swal.fire({
-                      title: "Are you sure?",
-                      text: "You won't be able to revert this!",
-                      icon: "warning",
-                      showCancelButton: true,
-                      confirmButtonColor: "#3085d6",
-                      cancelButtonColor: "#d33",
-                      confirmButtonText: "Yes, delete it!",
-                    }).then(async (result) => {
-                      if (result.isConfirmed) {
-                        console.log("DeleteIcon fire isConfirmed", user.id);
-                        await deleteUser(user.id);
-                        MySwal.fire({
-                          title: <p>Deleted!</p>,
-                          icon: "success",
-                          text: "Your file has been deleted.",
-                          willClose: () => {
-                            setRefresh(true);
-                          },
-                        });
-                      }
-                    });
-                  }}
-                />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, [refresh]);
+              <Tooltip color="secondary" content="Edit user">
+                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                  <EditIcon
+                    onClick={() => {
+                      handleShowDetails(user.id);
+                      console.log("handleShowDetails clicked", showDetails);
+                    }}
+                  />
+                </span>
+              </Tooltip>
+              <Tooltip color="danger" content="Delete user">
+                <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                  <DeleteIcon
+                    onClick={() => {
+                      console.log("DeleteIcon", user.id);
+                      Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!",
+                      }).then(async (result) => {
+                        if (result.isConfirmed) {
+                          console.log("DeleteIcon fire isConfirmed", user.id);
+                          await deleteUserInfo(user.id);
+                          MySwal.fire({
+                            title: <p>Deleted!</p>,
+                            icon: "success",
+                            text: "Your file has been deleted.",
+                            willClose: () => {
+                              setRefresh(true);
+                            },
+                          });
+                        }
+                      });
+                    }}
+                  />
+                </span>
+              </Tooltip>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [refresh]
+  );
 
   return (
     <>

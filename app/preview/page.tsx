@@ -6,7 +6,6 @@ import { mockSleep } from "@/components/utils";
 import { TestCase } from "@/components/excel/TestCase";
 import Loading from "../loading";
 import { useSearchParams } from "next/navigation";
-import { getParamsByApiId } from "@/lib/api-paramter";
 import { Parameter } from "@/models/Paramter";
 import { ParamBean } from "@/components/excel/ParamBean";
 import { generateTestCases } from "@/components/excel/ExcelAPI";
@@ -35,7 +34,12 @@ export default function ExcelPreviewPage() {
       // await mockSleep();
       console.log("searchApiId", searchApiId);
       if (searchApiId && searchApiId !== "") {
-        const params = await getParamsByApiId(searchApiId);
+        const params = await fetch(
+          `/api/paramter?apiId=${encodeURIComponent(searchApiId)}`,
+          {
+            method: "GET",
+          }
+        ).then((res) => res.json());
         const allTestCase = fetchExcelJSONData(params);
         setDownloadData(downloadDataArray(allTestCase));
         setExcelData(showDataArray(allTestCase));

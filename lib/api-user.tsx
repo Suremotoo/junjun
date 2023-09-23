@@ -1,15 +1,14 @@
-"use server";
+import { initializeDatabase } from "./db";
 
-import { db } from "./db";
-
-// 获取用户列表
+// user list
 export async function getUsers() {
+  const db = await initializeDatabase();
   const [rows] = await db.query("SELECT * FROM users where is_delete = '0' order by id desc");
   return rows;
 }
 
-// 根据用户 ID 获取用户信息
 export async function getUserById(id: string) {
+  const db = await initializeDatabase();
   const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
   const row = rows[0];
   if (!row) {
@@ -18,8 +17,9 @@ export async function getUserById(id: string) {
   return row;
 }
 
-// 创建新用户
+
 export async function createUser(user) {
+  const db = await initializeDatabase();
   await db.query(
     "INSERT INTO users ( name, role, team, status, age, avatar, email, phone)  VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     [
@@ -35,8 +35,9 @@ export async function createUser(user) {
   );
 }
 
-// 更新用户信息
+
 export async function updateUser(user) {
+  const db = await initializeDatabase();
   await db.query(
     "UPDATE users SET name = ?, role = ?, team = ?, status = ?, age = ?, avatar = ?, email = ?, phone = ? WHERE id = ?",
     [
@@ -53,8 +54,8 @@ export async function updateUser(user) {
   );
 }
 
-// 更新用户信息
 export async function deleteUser(id: string) {
+  const db = await initializeDatabase();
   console.log('delete user db =>> ', id)
   await db.query("UPDATE users SET is_delete = '1' WHERE id = ?", [id]);
 }
