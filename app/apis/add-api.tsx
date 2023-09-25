@@ -41,7 +41,7 @@ export default function AddApi({
   const [projectList, setProjectList] = useState([]);
 
   async function initProjects() {
-    const fetchedProjectList = await fetch("/api/project", {
+    const fetchedProjectList = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/project", {
       method: "GET",
     }).then((res) => res.json());
     const projectArray = fetchedProjectList.map(Project.fromObject);
@@ -59,7 +59,7 @@ export default function AddApi({
         if (operationType == OperationType.Update && primaryKey) {
           console.log("primaryKey", primaryKey);
           const queryItem = await fetch(
-            `/api/apis?id=${encodeURIComponent(primaryKey)}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/apis?id=${encodeURIComponent(primaryKey)}`,
             {
               method: "GET",
             }
@@ -124,7 +124,7 @@ export default function AddApi({
   async function performOperation(operation: OperationType, formData: object) {
     switch (operation) {
       case OperationType.Create:
-         await fetch("/api/apis", {
+         await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/apis", {
            method: "POST",
            body: JSON.stringify(formData),
          }).then((res) => res.json());
@@ -134,7 +134,7 @@ export default function AddApi({
         
         break;
       case OperationType.Update:
-         await fetch("/api/apis", {
+         await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/apis", {
            method: "PUT",
            body: JSON.stringify(formData),
          }).then((res) => res.json());

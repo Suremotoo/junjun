@@ -35,11 +35,6 @@ export const siteConfig = {
             disabled: false,
         },
         {
-            label: "Demo",
-            href: "/demo",
-            disabled: true,
-        },
-        {
             label: "User",
             href: "/user",
             disabled: true,

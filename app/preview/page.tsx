@@ -35,7 +35,7 @@ export default function ExcelPreviewPage() {
       console.log("searchApiId", searchApiId);
       if (searchApiId && searchApiId !== "") {
         const params = await fetch(
-          `/api/paramter?apiId=${encodeURIComponent(searchApiId)}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/api/paramter?apiId=${encodeURIComponent(searchApiId)}`,
           {
             method: "GET",
           }

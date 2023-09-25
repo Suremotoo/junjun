@@ -50,7 +50,7 @@ export default function AddParamter({
   const [showErrMsg, setShowErrMsg] = useState(false);
 
   async function initApis() {
-    const fetchedApiList = await fetch("/api/apis", {
+    const fetchedApiList = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/apis", {
       method: "GET",
     }).then((res) => res.json());
     const apiArray = fetchedApiList.map(Api.fromObject);
@@ -71,7 +71,7 @@ export default function AddParamter({
         if (operationType == OperationType.Update && primaryKey) {
           console.log("primaryKey", primaryKey);
           const queryItem = await fetch(
-            `/api/paramter?id=${encodeURIComponent(primaryKey)}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/paramter?id=${encodeURIComponent(primaryKey)}`,
             {
               method: "GET",
             }
@@ -144,7 +144,7 @@ export default function AddParamter({
   async function performOperation(operation: OperationType, formData: object) {
     switch (operation) {
       case OperationType.Create:
-        await fetch("/api/paramter", {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/paramter", {
           method: "POST",
           body: JSON.stringify(formData),
         }).then((res) => res.json());
@@ -154,7 +154,7 @@ export default function AddParamter({
         // deleteApi(formData.id);
         break;
       case OperationType.Update:
-        await fetch("/api/paramter", {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/paramter", {
           method: "PUT",
           body: JSON.stringify(formData),
         }).then((res) => res.json());

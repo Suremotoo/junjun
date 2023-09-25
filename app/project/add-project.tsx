@@ -43,7 +43,7 @@ export default function AddProject({
 
           // const queryItem = await getProjectById(primaryKey);
           const queryItem = await fetch(
-            `/api/project?id=${encodeURIComponent(primaryKey)}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/project?id=${encodeURIComponent(primaryKey)}`,
             {
               method: "GET",
             }
@@ -108,7 +108,7 @@ export default function AddProject({
     switch (operation) {
       case OperationType.Create:
         // await createProject(formData);
-        await fetch("/api/project", {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/project", {
           method: "POST",
           body: JSON.stringify(formData),
         }).then((res) => res.json());
@@ -118,7 +118,7 @@ export default function AddProject({
         break;
       case OperationType.Update:
         // await updateProject(formData);
-          await fetch("/api/project", {
+          await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/project", {
             method: "PUT",
             body: JSON.stringify(formData),
           }).then((res) => res.json());

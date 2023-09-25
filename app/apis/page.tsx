@@ -69,7 +69,7 @@ export default function ApiPage() {
   }
 
   async function fetchedProjectList() {
-    const fetchedProjectList = await fetch("/api/project", {
+    const fetchedProjectList = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/project", {
       method: "GET",
     }).then((res) => res.json());
     const projectArray = fetchedProjectList.map(Project.fromObject);
@@ -84,7 +84,7 @@ export default function ApiPage() {
     try {
       // await mockSleep();
       await fetchedProjectList();
-      const fetchedData = await fetch("/api/apis", {
+      const fetchedData = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/apis", {
         method: "GET",
       }).then((res) => res.json());
       const list = fetchedData.map(Api.fromObject);

@@ -75,7 +75,7 @@ export default function ParamterPage() {
   }
 
   async function fetchedApiList() {
-    const fetchedApiList = await fetch("/api/apis", {
+    const fetchedApiList = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/apis", {
       method: "GET",
     }).then((res) => res.json());
     const apiArray = fetchedApiList.map(Api.fromObject);
@@ -90,7 +90,7 @@ export default function ParamterPage() {
     try {
       // await mockSleep();
       await fetchedApiList();
-      const fetchedData = await fetch("/api/paramter", {
+      const fetchedData = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/paramter", {
         method: "GET",
       }).then((res) => res.json());
       const list = fetchedData.map(Parameter.fromObject);
@@ -128,7 +128,7 @@ export default function ParamterPage() {
 
   async function deleteInfo(id: string) {
     try {
-      await fetch("/api/paramter", {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/paramter", {
         method: "DELETE",
         body: JSON.stringify({ id: id }),
       });

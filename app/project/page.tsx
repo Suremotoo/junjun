@@ -62,7 +62,7 @@ export default function ProjectPage() {
   async function fetchData() {
     try {
       // const fetchedData = await getProjects();
-      const fetchedData = await fetch("/api/project", {
+      const fetchedData = await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/project", {
         method: "GET",
       }).then((res) => res.json());
       console.log("fetchedData", fetchedData);
@@ -91,7 +91,7 @@ export default function ProjectPage() {
   async function deleteInfo(id: string) {
     try {
       // await deleteProject(id);
-      await fetch("/api/project", {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/project", {
         method: "DELETE",
         body: JSON.stringify({ id: id }),
       });
