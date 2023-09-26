@@ -4,7 +4,7 @@ const os = require("os");
 const userHomeDirectory = os.homedir();
 
 const nextConfig = {
-  output: "standalone",
+  // output: "standalone",
   experimental: {
     serverActions: true,
   },
