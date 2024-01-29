@@ -3,6 +3,12 @@
 Effortlessly generate  test cases for your APIs – the power to ensure seamless performance.
 Using Next.js 13 (app directory) and NextUI (v2).
 
+## Screenshot
+
+![screenshot-light](screenshot/screenshot-light.png)
+![screenshot-dark](screenshot/screenshot-dark.png)
+![screenshot-preview](screenshot/screenshot-preview.png)
+
 ## Technologies Used
 
 - [Next.js 13](https://nextjs.org/docs/getting-started)
